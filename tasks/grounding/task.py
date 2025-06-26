@@ -14,9 +14,7 @@ from tasks._constants import DIAL_URL, API_KEY
 #  - Include a `<user_question>` block with a placeholder for the actual user query
 #  - Use proper XML-style tags to clearly separate the context from the user question
 #  - Use curly brace placeholders (`{context}` and `{user_question}`) that can be filled programmatically
-USER_PROMPT = """<context>{context}</context>
-
-<user_question>{user_question}</user_question>"""
+USER_PROMPT = None
 
 # TODO:
 #  Write System prompt that will:
@@ -28,17 +26,7 @@ USER_PROMPT = """<context>{context}</context>
 #       - instruct the LLM to clearly state when it cannot answer due to lack of relevant information
 #       - ensure the LLM does not use external knowledge beyond what's provided
 
-SYSTEM_PROMPT = """You are an assistant that assists users with their questions about their documents.
-            
-## Structure of User message:
-<context>Retrieved information from documents relevant to the user question</context>
-<user_question>The user's actual question</user_question>
-
-## Instructions:
-- Use information from <context> as context when answering the <user_question>.
-- Answer ONLY based on conversation history and <context>.
-- If no relevant information exists in <context> or conversation history, state that you cannot answer the question.
-"""
+SYSTEM_PROMPT = None
 
 
 class Grounder:
@@ -62,7 +50,8 @@ class Grounder:
         #  - create `vectorstore` from `full_context` (use method `_create_vectorstore`)
         #  Remember, we will create `vectorstore` for `full_context` each time when we call the
         #  `retrieve_context()` method!
-        vectorstore = self._create_vectorstore(full_context)
+        vectorstore: VectorStore = None
+
         relevant_docs = vectorstore.similarity_search_with_relevance_scores(
             user_question,
             k=k,
@@ -84,19 +73,13 @@ def main(user_question: str, full_context: str) -> list[BaseMessage]:
     # - deployment='text-embedding-3-small-1'
     # - azure_endpoint=DIAL_URL
     # - api_key=SecretStr(API_KEY)
-    grounder: Grounder = Grounder(
-        embeddings=AzureOpenAIEmbeddings(
-            deployment='text-embedding-3-small-1',
-            azure_endpoint=DIAL_URL,
-            api_key=SecretStr(API_KEY),
-        )
-    )
+    grounder: Grounder = None
 
     #TODO:
     # 1. Search with `grounder` relevant context by `user_question` and `full_context`
     # 2. Make USER_PROMPT augmentation (format and add `context=relevant_context` and user_question=user_question)
-    relevant_context = grounder.retrieve_context(user_question=user_question, full_context=full_context)
-    augmented_prompt = USER_PROMPT.format(context=relevant_context, user_question=user_question)
+    relevant_context = None
+    augmented_prompt = None
     print(f"\n🔗Augmented prompt:\n{augmented_prompt}\n{'-'*100}")
 
     messages: list[BaseMessage] = [
