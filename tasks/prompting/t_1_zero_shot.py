@@ -20,5 +20,7 @@ Sample: Is the number 19 a prime number? Answer 'Yes' or 'No'.
 # You can run test with 1+ prompt, please add at least 2
 
 PROMPTS = [
-
+"Classify the following movie review sentiment as positive or negative: 'This film was an absolute masterpiece, the acting was superb and the storyline kept me on the edge of my seat.",
+"Translate to French: 'The cat sat on the mat.'",
+"Given the following list of animals: 'lion, tiger, elephant, shark, dog'. Identify the animal that is a fish."
 ]
