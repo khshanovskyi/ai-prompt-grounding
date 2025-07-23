@@ -54,10 +54,10 @@ YOUR ANSWER MUST FOLLOW THIS FORMAT: {format_instructions}
 llm_client=AzureChatOpenAI(
     temperature=0.0,
     seed=1234,
-    azure_deployment='gpt-4o-2024-05-13',
+    azure_deployment='gpt-4o',
     azure_endpoint=DIAL_URL,
     api_key=SecretStr(API_KEY),
-    api_version="2024-05-01-preview"
+    api_version=""
 )
 
 

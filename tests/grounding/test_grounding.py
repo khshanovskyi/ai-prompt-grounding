@@ -183,38 +183,42 @@ The future of AI-powered applications depends on our ability to combine the powe
 
 USER_QUESTION="What is the best practices for prompting?"
 
-VALIDATION_PROMPT = """You are a validation system designed to analyze whether proper grounding has been performed in the user message preparation. Your task is to examine if the user message contains relevant context information that was properly retrieved from the full context document.
+VALIDATION_PROMPT = """You are a validation system designed to analyze whether proper grounding has been performed in the user message preparation. Your task is to examine if the grounding system correctly retrieved relevant context and whether the AI response is faithful to that retrieved context.
 
 ## Analysis Framework
 
-Examine the following elements for proper grounding in the user message:
+Examine the following elements for proper grounding validation:
 
-### Context Retrieval
-- Does the user message contain a <context> section with relevant information?
-- Is the information in the <context> section actually sourced from the full context document?
-- Are the retrieved context chunks relevant to the user's question?
+### Retrieval Quality
+- Does the user message contain a <context> section with actual content?
+- Are the retrieved context chunks semantically related to the user's question?
+- Do the chunks appear to be sourced from the full context document?
+- Is there evidence that similarity search was performed correctly?
 
-### Information Relevance
-- Does the retrieved context information relate to the user's question?
-- Are the specific concepts, techniques, or details in the context section traceable to the full context?
-- Is the retrieved information sufficient to answer the user's question?
+### Response Faithfulness
+- Does the AI response accurately reflect the information in the <context> section?
+- Are claims in the response traceable to the provided context chunks?
+- Does the response avoid making up information not present in the context?
+- Are specific terms, concepts, or details from the context properly used?
 
-### Grounding Quality
-- Are the context chunks semantically related to the user question?
-- Does the grounding system appear to have performed similarity search correctly?
-- Is there evidence that relevant information was successfully extracted from the full context?
-
-### Context Structure
+### Grounding System Function
 - Is the user message properly formatted with <context> and <user_question> sections?
-- Does the context section contain actual content (not empty or generic)?
+- Does the context section contain substantive information (not empty or generic)?
 - Are there multiple relevant pieces of information included in the context?
+
+## What NOT to Evaluate
+
+- Do NOT judge whether the context is comprehensive enough to fully answer the question
+- Do NOT penalize missing information that wasn't retrieved
+- Do NOT evaluate answer completeness - only evaluate grounding faithfulness
+- Do NOT require the response to cover all possible aspects of the topic
 
 ## Guidelines
 
-- Proper grounding means the <context> section should contain information from the full context document
-- The retrieved context should be relevant to answering the user's question
-- The context should contain specific details, not just generic statements
-- Multiple relevant chunks indicate better grounding quality
+- Proper grounding means relevant information was retrieved and the response stays faithful to it
+- The retrieval system may not capture everything - this is normal and not a grounding failure
+- Focus on whether what WAS retrieved is relevant and properly used
+- Multiple relevant chunks indicate good retrieval performance
 
 ## Input to Analyze
 
@@ -234,10 +238,10 @@ YOUR ANSWER MUST FOLLOW THIS FORMAT: {format_instructions}
 
 llm_client = AzureChatOpenAI(
     temperature=0.0,
-    azure_deployment='gpt-4o-2024-08-06',
+    azure_deployment='gpt-4o',
     azure_endpoint=DIAL_URL,
     api_key=SecretStr(API_KEY),
-    api_version="2024-05-01-preview"
+    api_version=""
 )
 
 
