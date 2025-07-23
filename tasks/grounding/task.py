@@ -78,13 +78,13 @@ def main(user_question: str, full_context: str) -> list[BaseMessage]:
     ]
     ai_message = AzureChatOpenAI(
         temperature=0.0,
-        azure_deployment='gpt-4o-2024-08-06',
+        azure_deployment='gpt-4o',
         azure_endpoint=DIAL_URL,
         api_key=SecretStr(API_KEY),
-        api_version="2024-05-01-preview"
+        api_version=""
     ).invoke(messages)
     messages.append(ai_message)
 
-    print(f"\n🤖Response: \n{ai_message.content} {'='*100}\n\n")
+    print(f"\n🤖Response: \n{ai_message.content}\n {'='*100}\n\n")
 
     return messages
